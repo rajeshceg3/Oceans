@@ -1,27 +1,35 @@
-var map = L.map('map').setView([0, 0], 2);
+var map = L.map('map', {
+    zoomControl: false
+}).setView([0, 0], 2);
 
-var stamenLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 1,
-    maxZoom: 16,
-    ext: 'jpg'
+var loader = document.getElementById('loader');
+map.on('load', function() {
+    loader.style.display = 'none';
 });
 
-stamenLayer.on('tileerror', function(error, tile) {
-    // Fallback to a different tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+var cartoDBLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
 });
 
-stamenLayer.addTo(map);
+cartoDBLayer.addTo(map);
 
 fetch('oceans.json')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
+        loader.style.display = 'none';
         data.oceans.forEach(ocean => {
-            var marker = L.marker([ocean.lat, ocean.lng]).addTo(map);
+            var icon = L.divIcon({
+                className: 'ocean-marker',
+                iconSize: [12, 12]
+            });
+            var marker = L.marker([ocean.lat, ocean.lng], { icon: icon }).addTo(map);
             marker.bindPopup("<b>" + ocean.name + "</b>");
 
             marker.on('mouseover', function (e) {
