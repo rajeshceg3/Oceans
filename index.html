@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oceans of the World</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" onerror="handleError()"></script>
+    <script>
+        function handleError() {
+            document.getElementById('map').innerHTML = '<div class="error-message">Failed to load map library. Please try again later.</div>';
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
