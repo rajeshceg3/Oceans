@@ -7,13 +7,17 @@ map.on('load', function() {
     loader.style.display = 'none';
 });
 
-var cartoDBLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+var cartoDBLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	subdomains: 'abcd',
 	maxZoom: 19
 });
 
 cartoDBLayer.addTo(map);
+
+L.control.zoom({
+    position: 'topright'
+}).addTo(map);
 
 fetch('oceans.json')
     .then(response => {
@@ -32,11 +36,8 @@ fetch('oceans.json')
             var marker = L.marker([ocean.lat, ocean.lng], { icon: icon }).addTo(map);
             marker.bindPopup("<b>" + ocean.name + "</b>");
 
-            marker.on('mouseover', function (e) {
-                this.openPopup();
-            });
-            marker.on('mouseout', function (e) {
-                this.closePopup();
+            marker.on('click', function (e) {
+                map.flyTo([ocean.lat, ocean.lng], 4);
             });
         });
     })
