@@ -1,0 +1,29 @@
+{
+    "oceans": [
+        {
+            "name": "Pacific Ocean",
+            "lat": 15,
+            "lng": -150
+        },
+        {
+            "name": "Atlantic Ocean",
+            "lat": 0,
+            "lng": -30
+        },
+        {
+            "name": "Indian Ocean",
+            "lat": -20,
+            "lng": 80
+        },
+        {
+            "name": "Southern Ocean",
+            "lat": -70,
+            "lng": 0
+        },
+        {
+            "name": "Arctic Ocean",
+            "lat": 80,
+            "lng": 0
+        }
+    ]
+}
