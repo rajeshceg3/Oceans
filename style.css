@@ -194,3 +194,91 @@ body {
         font-size: 1em;
     }
 }
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.modal.show-modal {
+    display: block;
+}
+
+.modal.show-modal .modal-content {
+    animation: scaleIn 0.3s ease-in-out forwards;
+}
+
+.modal.hide-modal {
+    background-color: rgba(0,0,0,0);
+}
+
+.modal.hide-modal .modal-content {
+    animation: scaleOut 0.3s ease-in-out forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+}
+
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    margin: 5% auto;
+    padding: 40px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    position: relative;
+    transform: scale(0.9);
+    opacity: 0;
+}
+
+.close-button {
+    color: #555;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 32px;
+    font-weight: normal;
+    transition: transform 0.2s ease-in-out;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    transform: rotate(90deg);
+}
+
+#modal-body {
+    padding-top: 20px;
+}
