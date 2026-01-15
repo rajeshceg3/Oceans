@@ -7,23 +7,41 @@
     <title>Oceans of the World</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="loader"></div>
-    <div id="map"></div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="modal-body"></div>
-        </div>
+    <div id="loader">
+        <div class="spinner"></div>
     </div>
+
+    <header id="app-header">
+        <h1>Oceans</h1>
+        <p class="subtitle">Explore the Blue Planet</p>
+    </header>
+
+    <div id="map"></div>
+
+    <aside id="info-panel" class="info-panel">
+        <button id="close-panel" class="close-button" aria-label="Close details">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div id="panel-content">
+            <!-- Content injected via JS -->
+            <div class="placeholder-content">
+                <p>Select an ocean marker to explore.</p>
+            </div>
+        </div>
+    </aside>
+
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" onerror="handleError()"></script>
     <script>
         function handleError() {
-            document.getElementById('map').innerHTML = '<div class="error-message">Failed to load map library. Please try again later.</div>';
+            document.getElementById('map').innerHTML = '<div class="error-message">Failed to load map library. Please check your connection.</div>';
         }
     </script>
     <script src="script.js"></script>
