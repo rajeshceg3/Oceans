@@ -7,7 +7,7 @@
     <title>Oceans of the World</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,13 +17,21 @@
     </div>
 
     <header id="app-header">
-        <h1>Oceans</h1>
-        <p class="subtitle">Explore the Blue Planet</p>
+        <div class="header-content">
+            <h1>Oceans</h1>
+            <p class="subtitle">Explore the Blue Planet</p>
+        </div>
     </header>
+
+    <nav id="ocean-nav">
+        <!-- List populated via JS -->
+        <ul id="ocean-list"></ul>
+    </nav>
 
     <div id="map"></div>
 
     <aside id="info-panel" class="info-panel">
+        <div class="panel-handle mobile-only"></div>
         <button id="close-panel" class="close-button" aria-label="Close details">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
