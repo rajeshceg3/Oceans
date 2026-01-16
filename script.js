@@ -1,91 +1,146 @@
+// Initialize map
+// Use Voyager for a clean, light look that contrasts well with the UI
 var map = L.map('map', {
-    zoomControl: false
-}).setView([0, 0], 2);
+    zoomControl: false,
+    attributionControl: false
+}).setView([20, 0], 2);
 
+// Add attribution separately if needed, or stick to Leaflet's default in a cleaner way
+L.control.attribution({
+    position: 'bottomleft'
+}).addTo(map);
+
+// Loader logic
 var loader = document.getElementById('loader');
-map.on('load', function() {
-    loader.style.display = 'none';
+window.addEventListener('load', function() {
+    // Add a small delay for smoothness
+    setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 500);
+    }, 800);
 });
 
-var cartoDBLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+// Map Tiles
+var cartoDBLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; OpenStreetMap &copy; CARTO',
 	subdomains: 'abcd',
 	maxZoom: 19
 });
-
 cartoDBLayer.addTo(map);
 
+// Add Labels layer on top for better legibility if needed,
+// or just use voyager (with labels). Let's stick to 'voyager' (labels included) or separate.
+// Actually 'voyager_nolabels' + 'voyager_only_labels' is better for stacking, but let's keep it simple.
+// The previous url was 'voyager_labels_under', which is good.
+// Let's revert to that one as it looks nice.
+cartoDBLayer.setUrl('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png');
+
+// Custom Zoom Control
 L.control.zoom({
-    position: 'topright'
+    position: 'bottomright'
 }).addTo(map);
 
-var modal = document.getElementById('modal');
-var modalBody = document.getElementById('modal-body');
-var closeButton = document.getElementsByClassName('close-button')[0];
-var originalCenter;
-var originalZoom;
+// UI Elements
+var panel = document.getElementById('info-panel');
+var panelContent = document.getElementById('panel-content');
+var closeButton = document.getElementById('close-panel');
 
-function closeModal() {
-    modal.classList.add('hide-modal');
-    modal.classList.remove('show-modal');
+// State
+var activeMarker = null;
+
+function closePanel() {
+    panel.classList.remove('active');
+    panel.classList.add('panel-hidden');
+
+    // Reset map view if needed, or just leave it.
+    // Usually nice to zoom out a bit if we were zoomed in very close,
+    // but preserving state is also good UX.
+    // Let's just deselect the marker visual state if we had one.
+
     setTimeout(() => {
-        modal.style.display = 'none';
-        modal.classList.remove('hide-modal');
-    }, 300); // Should match animation duration
+        // Clear content after transition
+        // panelContent.innerHTML = '';
+    }, 600);
+}
 
-    if (originalCenter && originalZoom) {
-        map.flyTo(originalCenter, originalZoom);
+closeButton.addEventListener('click', closePanel);
+
+// Handle map clicks to close panel
+map.on('click', function(e) {
+    // Check if click target is NOT a marker
+    if (!e.originalEvent.target.classList.contains('ocean-dot') &&
+        !e.originalEvent.target.classList.contains('ocean-pulse')) {
+        closePanel();
     }
+});
+
+function openOceanDetails(ocean) {
+    // Generate HTML
+    var html = `
+        <div class="ocean-details">
+            <h2>${ocean.name}</h2>
+            <div class="ocean-image-container">
+                <img src="${ocean.image_url}" alt="${ocean.name}" class="ocean-image">
+            </div>
+            <div class="ocean-description">
+                ${ocean.description}
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Max Depth</span>
+                <span>${ocean.depth}</span>
+            </div>
+            <div class="fun-facts">
+                <h4>Did You Know?</h4>
+                <ul>
+                    ${ocean.fun_facts.map(fact => `<li>${fact}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+
+    panelContent.innerHTML = html;
+    panel.classList.remove('panel-hidden');
+    panel.classList.add('active');
 }
 
-closeButton.onclick = function() {
-    closeModal();
-}
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
+// Fetch Data
 fetch('oceans.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        loader.style.display = 'none';
         data.oceans.forEach(ocean => {
+            // Create custom icon
             var icon = L.divIcon({
-                className: 'ocean-marker',
-                iconSize: [12, 12]
+                className: 'ocean-marker-wrap',
+                html: '<div class="ocean-pulse"></div><div class="ocean-dot"></div>',
+                iconSize: [40, 40], // Size of the pulse container
+                iconAnchor: [20, 20] // Center
             });
+
             var marker = L.marker([ocean.lat, ocean.lng], { icon: icon }).addTo(map);
 
             marker.on('click', function (e) {
-                originalCenter = map.getCenter();
-                originalZoom = map.getZoom();
+                // Fly to location
+                // Offset for desktop panel:
+                // If width > 768, panel is on right (400px).
+                // We want the point to be centered in the remaining space (calc(100vw - 400px)).
+                // So center target is (windowWidth - 400)/2 from left.
+                // Current center is windowWidth/2.
+                // We need to shift target by -200px (move right) => Map moves left.
 
-                map.flyTo([ocean.lat, ocean.lng], 4);
+                var targetLat = ocean.lat;
+                var targetLng = ocean.lng;
+                var zoomLevel = 4;
 
-                var modalContent = `
-                    <div class="ocean-popup">
-                        <h2>${ocean.name}</h2>
-                        <img src="${ocean.image_url}" alt="${ocean.name}" class="popup-image">
-                        <p>${ocean.description}</p>
-                        <h4>Fun Facts:</h4>
-                        <ul>
-                            ${ocean.fun_facts.map(fact => `<li>${fact}</li>`).join('')}
-                        </ul>
-                        <p><strong>Max Depth:</strong> ${ocean.depth}</p>
-                    </div>
-                `;
+                // Simple flyTo
+                map.flyTo([targetLat, targetLng], zoomLevel, {
+                    duration: 1.5,
+                    easeLinearity: 0.25
+                });
 
-                modalBody.innerHTML = modalContent;
-                modal.style.display = 'block';
-                modal.classList.add('show-modal');
+                // Open Panel
+                openOceanDetails(ocean);
             });
         });
     })
