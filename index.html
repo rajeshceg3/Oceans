@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="img-src * 'self' data:;">
-    <title>Oceans of the World</title>
+    <title>Oceans | The Blue Planet</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -14,21 +14,22 @@
 <body>
     <div id="loader">
         <div class="spinner"></div>
+        <div class="loader-text text-gradient">Initializing...</div>
     </div>
 
     <header id="app-header">
         <div class="header-content">
             <h1>Oceans</h1>
-            <p class="subtitle">Explore the Blue Planet</p>
+            <p class="subtitle">Expedition Interface</p>
         </div>
     </header>
 
     <nav id="ocean-nav">
-        <!-- List populated via JS -->
         <ul id="ocean-list"></ul>
     </nav>
 
     <div id="map"></div>
+    <div class="map-vignette"></div>
 
     <aside id="info-panel" class="info-panel">
         <div class="panel-handle mobile-only"></div>
@@ -38,10 +39,11 @@
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         </button>
-        <div id="panel-content">
-            <!-- Content injected via JS -->
-            <div class="placeholder-content">
-                <p>Select an ocean marker to explore.</p>
+
+        <!-- Scrollable Container -->
+        <div id="panel-scroll-container">
+            <div id="panel-content">
+                <!-- Content injected via JS -->
             </div>
         </div>
     </aside>
@@ -49,7 +51,7 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" onerror="handleError()"></script>
     <script>
         function handleError() {
-            document.getElementById('map').innerHTML = '<div class="error-message">Failed to load map library. Please check your connection.</div>';
+            document.getElementById('map').innerHTML = '<div class="error-message" style="color:white; text-align:center; padding-top:40vh;">Failed to load map library. Please check your connection.</div>';
         }
     </script>
     <script src="script.js"></script>
