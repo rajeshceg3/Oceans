@@ -1,25 +1,26 @@
-// Initialize map
-// Use Dark Matter for a premium, slick look
+// Initialize map with premium settings
+// Dark Matter tiles for a sophisticated, deep-ocean aesthetic
 var map = L.map('map', {
     zoomControl: false,
     attributionControl: false,
     worldCopyJump: true,
-    zoomSnap: 0.5 // Smoother zooming
+    zoomSnap: 0.1, // Ultra-smooth zooming
+    wheelPxPerZoomLevel: 120 // refined scroll feel
 }).setView([20, 0], 2.5);
 
 L.control.attribution({
     position: 'bottomleft'
 }).addTo(map);
 
-// Loader logic
+// Loader Animation Logic
 var loader = document.getElementById('loader');
 window.addEventListener('load', function() {
     setTimeout(() => {
         loader.style.opacity = '0';
         setTimeout(() => {
             loader.style.display = 'none';
-        }, 800);
-    }, 1500); // Slightly longer for dramatic effect
+        }, 1000);
+    }, 1200);
 });
 
 // Map Tiles - Dark Matter
@@ -29,41 +30,71 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{
 	maxZoom: 19
 }).addTo(map);
 
-// Custom Zoom Control
+// Custom Zoom Control (bottom-right)
 L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
-// UI Elements
+// UI References
 var panel = document.getElementById('info-panel');
 var panelContent = document.getElementById('panel-content');
 var closeButton = document.getElementById('close-panel');
 var oceanList = document.getElementById('ocean-list');
+var panelScroll = document.getElementById('panel-scroll-container');
 
-// State
-var activeMarker = null;
+// Configuration
+const CONFIG = {
+    desktopPanelWidth: 520,
+    mobileSheetHeightRatio: 0.5, // Approx 50% of screen effective for centering
+    zoomLevel: 4.2
+};
+
+// --- Core Interactions ---
 
 function closePanel() {
     panel.classList.remove('active');
-    // Deselect all nav items
+
+    // Deactivate nav items
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-    // Zoom out slightly if needed
-    map.flyTo([20, 0], 2.5, { duration: 1.5 });
+    // Reset map view slightly for context
+    map.flyTo([20, 0], 2.5, {
+        duration: 1.8,
+        easeLinearity: 0.2
+    });
 }
 
 closeButton.addEventListener('click', closePanel);
 
+// Handle mobile pull-tab (Swipe Down to Close)
+const handle = document.querySelector('.panel-handle');
+let startY = 0;
+
+handle.addEventListener('click', function() {
+    closePanel();
+});
+
+handle.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY;
+}, { passive: true });
+
+handle.addEventListener('touchend', function(e) {
+    const endY = e.changedTouches[0].clientY;
+    const diff = endY - startY;
+
+    // Detect swipe down (positive diff)
+    if (diff > 50) {
+        closePanel();
+    }
+}, { passive: true });
+
 map.on('click', function(e) {
-    // If clicking map (not marker), close panel
-    // The event target check in original code was slightly buggy with divIcons,
-    // relying on the fact that map click fires if marker click doesn't stop propagation.
-    // We will handle close in the map click, but ensure marker click stops propagation.
+    // Close panel when clicking empty map space
     closePanel();
 });
 
 function openOceanDetails(ocean) {
-    // Generate Hero Layout
+    // Generate Hero Layout with polished typography and layout
     var html = `
         <div class="ocean-hero">
             <img src="${ocean.image_url}" alt="${ocean.name}">
@@ -75,7 +106,12 @@ function openOceanDetails(ocean) {
                 <div class="stat-box">
                     <span class="stat-label">Max Depth</span>
                     <span class="stat-value">${ocean.depth.split(' ')[0]}</span>
-                    <span class="stat-label" style="margin-top:4px; opacity:0.6;">${ocean.depth.split(' ').slice(1).join(' ')}</span>
+                    <span class="stat-label" style="opacity:0.7; margin-top:4px; font-size:0.65rem;">${ocean.depth.split(' ').slice(1).join(' ')}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Area</span>
+                    <span class="stat-value">---</span>
+                    <span class="stat-label" style="opacity:0.7; margin-top:4px; font-size:0.65rem;">Million km²</span>
                 </div>
             </div>
 
@@ -94,51 +130,92 @@ function openOceanDetails(ocean) {
 
     panelContent.innerHTML = html;
 
-    // Reset scroll
-    document.getElementById('panel-scroll-container').scrollTop = 0;
+    // Reset scroll position with smooth behavior
+    panelScroll.scrollTo({ top: 0, behavior: 'instant' });
 
+    // Activate Panel
     panel.classList.add('active');
 }
 
+/**
+ * Calculates the center point offset based on active UI elements (Panel/Sheet)
+ * to ensure the marker remains perfectly visible.
+ */
 function flyToOcean(lat, lng) {
-    // Offset center slightly to account for panel on desktop
     var targetLat = lat;
     var targetLng = lng;
 
-    // Check if mobile
+    var zoom = CONFIG.zoomLevel;
+    console.log(`flyToOcean called: lat=${lat}, lng=${lng}, zoom=${zoom}, windowWidth=${window.innerWidth}, windowHeight=${window.innerHeight}`);
+
+    // Determine Offset
     if (window.innerWidth > 768) {
-        // Shift map center to the left so the point is visible when panel is open on right
-        // This is a rough approximation, can be improved with projection math
-        targetLng = lng - 20;
+        // Desktop: Offset center to the left (content is on the right)
+        // We want the target to be centered in the remaining space: (Screen - Panel) / 2
+        // So the offset from true center is PanelWidth / 2
+
+        var offsetPixels = CONFIG.desktopPanelWidth / 2;
+
+        // Project current lat/lng to pixels at target zoom
+        var point = map.project([lat, lng], zoom);
+
+        // Add offset to x (shifting map center right, puts point left)
+        var targetPoint = point.add([offsetPixels, 0]);
+
+        // Unproject back to coordinates
+        var targetCoords = map.unproject(targetPoint, zoom);
+        targetLat = targetCoords.lat;
+        targetLng = targetCoords.lng;
+
     } else {
-        // Shift map center up so point is visible above bottom sheet
-        targetLat = lat - 10;
+        // Mobile: Offset center down (content is at bottom)
+        // We want point in top portion.
+        // Let's shift map center "down" (y + offset) so point moves "up"
+
+        var offsetPixelsY = window.innerHeight * 0.30; // Shift up by 30% of screen
+
+        var point = map.project([lat, lng], zoom);
+        var targetPoint = point.subtract([0, -offsetPixelsY]); // Subtract negative = add
+
+        var targetCoords = map.unproject(targetPoint, zoom);
+        targetLat = targetCoords.lat;
+        targetLng = targetCoords.lng;
     }
 
-    map.flyTo([targetLat, targetLng], 4, {
+    console.log(`Targeting: ${targetLat}, ${targetLng}`);
+    map.flyTo([targetLat, targetLng], zoom, {
         duration: 2.0,
         easeLinearity: 0.2
     });
 }
 
-// Fetch Data
+// Fetch and Initialize Data
 fetch('oceans.json')
     .then(response => response.json())
     .then(data => {
         data.oceans.forEach((ocean, index) => {
-            // Add Marker
+            // Create Custom Marker Icon
             var icon = L.divIcon({
                 className: 'ocean-marker-wrap',
                 html: `<div class="ocean-pulse"></div><div class="ocean-dot"></div>`,
                 iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                iconAnchor: [20, 20],
+                tooltipAnchor: [20, 0]
             });
 
             var marker = L.marker([ocean.lat, ocean.lng], { icon: icon }).addTo(map);
 
+            // Add Tooltip (Desktop Hover)
+            marker.bindTooltip(ocean.name, {
+                direction: 'top',
+                offset: [0, -20],
+                className: 'ocean-tooltip',
+                opacity: 0.9
+            });
+
             // Click Handler
             const handleClick = (e) => {
-                if(e) L.DomEvent.stopPropagation(e); // Prevent map click
+                if(e) L.DomEvent.stopPropagation(e);
 
                 flyToOcean(ocean.lat, ocean.lng);
                 openOceanDetails(ocean);
@@ -146,24 +223,25 @@ fetch('oceans.json')
                 // Update Nav State
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 const navItem = document.getElementById(`nav-${index}`);
-                if (navItem) navItem.classList.add('active');
+                if (navItem) {
+                    navItem.classList.add('active');
+                    // Scroll nav into view if needed (mobile)
+                    navItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
             };
 
             marker.on('click', handleClick);
 
-            // Add to Nav
+            // Create Nav Item
             var li = document.createElement('li');
-            // Format index for display (01, 02...)
             var displayIndex = (index + 1).toString().padStart(2, '0');
 
-            li.innerHTML = `<button class="nav-item" id="nav-${index}">
+            li.innerHTML = `<button class="nav-item" id="nav-${index}" aria-label="Explore ${ocean.name}">
                                 <span class="nav-number">${displayIndex}</span>
                                 <span class="nav-name">${ocean.name}</span>
                             </button>`;
 
-            // Note: We need to bind the click properly
             li.querySelector('button').addEventListener('click', (e) => {
-                // Prevent bubbling if needed, though button is inside li
                 handleClick();
             });
 
