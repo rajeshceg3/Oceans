@@ -11,7 +11,8 @@
                 "It contains the deepest point on Earth, the Challenger Deep in the Mariana Trench."
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Pacific_Ocean_-_en.png",
-            "depth": "10,928 meters (35,853 feet)"
+            "depth": "10,928 meters (35,853 feet)",
+            "area": "165.2"
         },
         {
             "name": "Atlantic Ocean",
@@ -24,7 +25,8 @@
                 "The Mid-Atlantic Ridge, a submarine mountain range, runs down the center of the ocean."
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Atlantic_Ocean_-_en.png",
-            "depth": "8,376 meters (27,480 feet)"
+            "depth": "8,376 meters (27,480 feet)",
+            "area": "85.1"
         },
         {
             "name": "Indian Ocean",
@@ -37,7 +39,8 @@
                 "It is home to many unique ecosystems, including coral reefs and mangroves."
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Indian_Ocean.svg",
-            "depth": "7,290 meters (23,920 feet)"
+            "depth": "7,290 meters (23,920 feet)",
+            "area": "70.6"
         },
         {
             "name": "Southern Ocean",
@@ -50,7 +53,8 @@
                 "It is home to a unique and diverse range of marine life, including krill, penguins, and seals."
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Southern_Ocean_-_en.png/1024px-Southern_Ocean_-_en.png",
-            "depth": "7,432 meters (24,383 feet)"
+            "depth": "7,432 meters (24,383 feet)",
+            "area": "20.3"
         },
         {
             "name": "Arctic Ocean",
@@ -63,7 +67,8 @@
                 "It is home to unique wildlife, including polar bears and narwhals."
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Arctic_Ocean_-_en.png",
-            "depth": "5,550 meters (18,210 feet)"
+            "depth": "5,550 meters (18,210 feet)",
+            "area": "14.1"
         }
     ]
 }
