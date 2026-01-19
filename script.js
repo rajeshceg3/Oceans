@@ -4,7 +4,8 @@ var map = L.map('map', {
     zoomControl: false,
     attributionControl: false,
     worldCopyJump: true,
-    zoomSnap: 0.1, // Ultra-smooth zooming
+    zoomSnap: 0.05, // Ultra-smooth zooming
+    wheelDebounceTime: 150,
     wheelPxPerZoomLevel: 120 // refined scroll feel
 }).setView([20, 0], 2.5);
 
@@ -110,7 +111,7 @@ function openOceanDetails(ocean) {
                 </div>
                 <div class="stat-box">
                     <span class="stat-label">Area</span>
-                    <span class="stat-value">---</span>
+                    <span class="stat-value">${ocean.area}</span>
                     <span class="stat-label" style="opacity:0.7; margin-top:4px; font-size:0.65rem;">Million km²</span>
                 </div>
             </div>
@@ -146,7 +147,6 @@ function flyToOcean(lat, lng) {
     var targetLng = lng;
 
     var zoom = CONFIG.zoomLevel;
-    console.log(`flyToOcean called: lat=${lat}, lng=${lng}, zoom=${zoom}, windowWidth=${window.innerWidth}, windowHeight=${window.innerHeight}`);
 
     // Determine Offset
     if (window.innerWidth > 768) {
@@ -182,10 +182,9 @@ function flyToOcean(lat, lng) {
         targetLng = targetCoords.lng;
     }
 
-    console.log(`Targeting: ${targetLat}, ${targetLng}`);
     map.flyTo([targetLat, targetLng], zoom, {
-        duration: 2.0,
-        easeLinearity: 0.2
+        duration: 2.5,
+        easeLinearity: 0.1 // More ease-in-out
     });
 }
 
@@ -198,9 +197,9 @@ fetch('oceans.json')
             var icon = L.divIcon({
                 className: 'ocean-marker-wrap',
                 html: `<div class="ocean-pulse"></div><div class="ocean-dot"></div>`,
-                iconSize: [40, 40],
-                iconAnchor: [20, 20],
-                tooltipAnchor: [20, 0]
+                iconSize: [80, 80], // Increased to avoid clipping pulse
+                iconAnchor: [40, 40],
+                tooltipAnchor: [0, -20]
             });
 
             var marker = L.marker([ocean.lat, ocean.lng], { icon: icon }).addTo(map);
@@ -208,9 +207,9 @@ fetch('oceans.json')
             // Add Tooltip (Desktop Hover)
             marker.bindTooltip(ocean.name, {
                 direction: 'top',
-                offset: [0, -20],
+                offset: [0, -40], // Adjusted for larger icon
                 className: 'ocean-tooltip',
-                opacity: 0.9
+                opacity: 1
             });
 
             // Click Handler
