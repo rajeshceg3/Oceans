@@ -1,0 +1,29 @@
+{
+  "name": "oceans-expedition",
+  "version": "1.0.0",
+  "description": "Oceans Expedition Interface",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.39.0",
+    "eslint": "^8.51.0",
+    "jsdom": "^22.1.0",
+    "prettier": "^3.0.3",
+    "vite": "^4.4.11",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^0.34.6"
+  },
+  "dependencies": {
+    "dompurify": "^3.0.6",
+    "leaflet": "^1.9.4"
+  }
+}
