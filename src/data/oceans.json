@@ -12,7 +12,10 @@
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Pacific_Ocean_-_en.png",
             "depth": "10,928 meters (35,853 feet)",
-            "area": "165.2"
+            "area": "165.2",
+            "avg_temp": "3.5°C (Deep Water)",
+            "marine_life": ["Great White Shark", "Blue Whale", "Giant Squid", "Coral Reefs"],
+            "climate_impact": "The Pacific plays a critical role in the global climate system through phenomena like El Niño and La Niña, which influence weather patterns worldwide."
         },
         {
             "name": "Atlantic Ocean",
@@ -26,7 +29,10 @@
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Atlantic_Ocean_-_en.png",
             "depth": "8,376 meters (27,480 feet)",
-            "area": "85.1"
+            "area": "85.1",
+            "avg_temp": "3.7°C (Deep Water)",
+            "marine_life": ["Humpback Whale", "Atlantic Salmon", "Green Sea Turtle", "Manatee"],
+            "climate_impact": "The Atlantic Meridional Overturning Circulation (AMOC) is a major current system that transports warm water to the North Atlantic, moderating the climate of Europe."
         },
         {
             "name": "Indian Ocean",
@@ -40,7 +46,10 @@
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Indian_Ocean.svg",
             "depth": "7,290 meters (23,920 feet)",
-            "area": "70.6"
+            "area": "70.6",
+            "avg_temp": "3.7°C (Deep Water)",
+            "marine_life": ["Dugong", "Whale Shark", "Manta Ray", "Clownfish"],
+            "climate_impact": "The Indian Ocean Dipole affects rainfall patterns across the Indian Ocean rim, influencing monsoons in India and droughts in Australia."
         },
         {
             "name": "Southern Ocean",
@@ -54,7 +63,10 @@
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Southern_Ocean_-_en.png/1024px-Southern_Ocean_-_en.png",
             "depth": "7,432 meters (24,383 feet)",
-            "area": "20.3"
+            "area": "20.3",
+            "avg_temp": "-1.8°C to 10°C",
+            "marine_life": ["Emperor Penguin", "Antarctic Krill", "Weddell Seal", "Orca"],
+            "climate_impact": "The Southern Ocean absorbs a significant portion of the heat and carbon dioxide produced by human activities, acting as a crucial buffer against climate change."
         },
         {
             "name": "Arctic Ocean",
@@ -68,7 +80,10 @@
             ],
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Arctic_Ocean_-_en.png",
             "depth": "5,550 meters (18,210 feet)",
-            "area": "14.1"
+            "area": "14.1",
+            "avg_temp": "-1.8°C (Surface)",
+            "marine_life": ["Polar Bear", "Narwhal", "Walrus", "Beluga Whale"],
+            "climate_impact": "Arctic sea ice reflects sunlight back into space (albedo effect). Its rapid melting contributes to global warming and rising sea levels."
         }
     ]
 }

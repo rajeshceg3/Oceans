@@ -90,6 +90,14 @@ export class UIManager {
     openOceanDetails(ocean) {
         const funFactsList = ocean.fun_facts.map(fact => `<li>${DOMPurify.sanitize(fact)}</li>`).join('');
 
+        // New Content Processing
+        const marineLifeTags = (ocean.marine_life || []).map(life =>
+            `<span class="life-tag">${DOMPurify.sanitize(life)}</span>`
+        ).join('');
+
+        const tempValue = ocean.avg_temp ? DOMPurify.sanitize(ocean.avg_temp) : 'N/A';
+        const climateText = ocean.climate_impact ? DOMPurify.sanitize(ocean.climate_impact) : '';
+
         // Sanitize all inputs
         const html = `
             <div class="ocean-hero">
@@ -109,11 +117,39 @@ export class UIManager {
                         <span class="stat-value">${DOMPurify.sanitize(ocean.area)}</span>
                         <span class="stat-label" style="opacity:0.7; margin-top:4px; font-size:0.65rem;">Million km²</span>
                     </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Avg Temp</span>
+                        <span class="stat-value" style="font-size: 1.5rem;">${tempValue.split(' ')[0]}</span>
+                        <span class="stat-label" style="opacity:0.7; margin-top:4px; font-size:0.65rem;">${tempValue.substring(tempValue.indexOf(' ') + 1)}</span>
+                    </div>
+                </div>
+
+                <div class="marine-life-section" style="margin-bottom: 32px;">
+                    <h4 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-accent); margin-bottom: 16px;">Marine Life</h4>
+                    <div class="marine-life-tags">
+                        ${marineLifeTags}
+                    </div>
                 </div>
 
                 <p class="ocean-desc">
                     ${DOMPurify.sanitize(ocean.description)}
                 </p>
+
+                ${climateText ? `
+                <div class="climate-section">
+                    <div class="climate-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <div class="climate-content">
+                        <h4>Climate Pulse</h4>
+                        <p>${climateText}</p>
+                    </div>
+                </div>
+                ` : ''}
 
                 <div class="fact-box">
                     <h4>Expedition Notes</h4>
@@ -121,13 +157,49 @@ export class UIManager {
                         ${funFactsList}
                     </ul>
                 </div>
+
+                <button id="log-discovery-btn" class="log-btn">
+                    <span>Log Discovery</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </button>
             </div>
         `;
 
         // Safe Injection
-        this.panelContent.innerHTML = DOMPurify.sanitize(html, { ADD_TAGS: ['img'], ADD_ATTR: ['src', 'alt'] });
+        this.panelContent.innerHTML = DOMPurify.sanitize(html, { ADD_TAGS: ['img', 'svg', 'path', 'polyline', 'line', 'circle'], ADD_ATTR: ['src', 'alt', 'viewBox', 'd', 'points', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'fill', 'stroke', 'stroke-width', 'style'] });
+
+        // Add Listener
+        const logBtn = document.getElementById('log-discovery-btn');
+        if (logBtn) {
+            logBtn.addEventListener('click', () => {
+                this.showToast('Discovery logged to expedition journal.');
+                logBtn.classList.add('logged');
+                logBtn.innerHTML = `<span>Logged</span> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            });
+        }
 
         if (this.panelScroll) this.panelScroll.scrollTo({ top: 0, behavior: 'instant' });
         if (this.panel) this.panel.classList.add('active');
+    }
+
+    showToast(message) {
+        let toast = document.getElementById('toast-notification');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 }
