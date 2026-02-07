@@ -54,6 +54,7 @@ async function initApp() {
         });
 
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Critical Mission Failure: Initialization', error);
         // Fallback or Toast here
     }
