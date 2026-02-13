@@ -188,6 +188,28 @@ export class UIManager {
         if (this.panel) this.panel.classList.add('active');
     }
 
+    setupTourControls(onPrev, onNext, onExit) {
+        const prevBtn = document.getElementById('tour-prev');
+        const nextBtn = document.getElementById('tour-next');
+        const exitBtn = document.getElementById('tour-exit');
+
+        if (prevBtn) prevBtn.addEventListener('click', onPrev);
+        if (nextBtn) nextBtn.addEventListener('click', onNext);
+        if (exitBtn) exitBtn.addEventListener('click', onExit);
+    }
+
+    setTourMode(isActive) {
+        const controls = document.getElementById('tour-controls');
+
+        if (isActive) {
+            document.body.classList.add('tour-active');
+            if (controls) controls.classList.remove('hidden');
+        } else {
+            document.body.classList.remove('tour-active');
+            if (controls) controls.classList.add('hidden');
+        }
+    }
+
     showToast(message) {
         let toast = document.getElementById('toast-notification');
         if (!toast) {

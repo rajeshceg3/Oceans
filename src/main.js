@@ -7,7 +7,8 @@ import { UIManager } from './modules/UIManager.js';
 // Application State
 const state = {
     oceans: [],
-    activeIndex: -1
+    activeIndex: -1,
+    tourIndex: -1
 };
 
 // Initialize Modules
@@ -25,6 +26,15 @@ async function initApp() {
 
         // Initialize UI with Data
         uiManager.renderNav(state.oceans, (index) => handleOceanSelect(index));
+
+        // Start Tour Button
+        const startTourBtn = document.getElementById('start-tour-btn');
+        if (startTourBtn) {
+            startTourBtn.addEventListener('click', startTour);
+        }
+
+        // Tour Controls
+        uiManager.setupTourControls(prevStop, nextStop, endTour);
 
         // Add Markers to Map
         state.oceans.forEach((ocean, index) => {
@@ -58,6 +68,35 @@ async function initApp() {
         console.error('Critical Mission Failure: Initialization', error);
         // Fallback or Toast here
     }
+}
+
+function startTour() {
+    if (state.oceans.length === 0) return;
+
+    state.tourIndex = 0;
+    uiManager.setTourMode(true);
+    handleOceanSelect(state.tourIndex);
+}
+
+function nextStop() {
+    if (state.tourIndex === -1) return;
+
+    state.tourIndex = (state.tourIndex + 1) % state.oceans.length;
+    handleOceanSelect(state.tourIndex);
+}
+
+function prevStop() {
+    if (state.tourIndex === -1) return;
+
+    state.tourIndex = (state.tourIndex - 1 + state.oceans.length) % state.oceans.length;
+    handleOceanSelect(state.tourIndex);
+}
+
+function endTour() {
+    state.tourIndex = -1;
+    uiManager.setTourMode(false);
+    mapController.resetView();
+    uiManager.closePanel();
 }
 
 function handleOceanSelect(index) {
