@@ -22,6 +22,13 @@
         </div>
     </header>
 
+    <button id="start-tour-btn" class="start-tour-btn" aria-label="Start Guided Expedition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        Start Expedition
+    </button>
+
     <nav id="ocean-nav">
         <ul id="ocean-list"></ul>
     </nav>
@@ -45,6 +52,26 @@
             </div>
         </div>
     </aside>
+
+    <div id="tour-controls" class="tour-controls hidden">
+        <button id="tour-prev" class="tour-btn" aria-label="Previous Location">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button id="tour-exit" class="tour-btn tour-exit" aria-label="Exit Expedition">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>End Tour</span>
+        </button>
+        <button id="tour-next" class="tour-btn" aria-label="Next Location">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
 
     <script type="module" src="/src/main.js"></script>
 </body>
