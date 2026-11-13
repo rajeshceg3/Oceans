@@ -1,5 +1,8 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '@maplibre/maplibre-gl-leaflet';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import warmMapStyle from '../vendor/warm-map/style.json';
 
 // Fix Leaflet's default icon path issues with bundlers
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -34,9 +37,11 @@ export class MapController {
 
         this.map = L.map(this.mapId, this.config).setView(this.config.defaultView, this.config.defaultZoom);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
+        // Warm-paper basemap (worlds shared module): OpenFreeMap vector tiles
+        // via the MapLibre GL Leaflet bridge. Free public instance, no API key.
+        L.maplibreGL({
+            style: warmMapStyle,
+            attribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
             maxZoom: 19
         }).addTo(this.map);
 
